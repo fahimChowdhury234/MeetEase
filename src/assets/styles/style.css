@@ -1,0 +1,12 @@
+.signup svg{
+    transition: all .3s ease;
+}
+.signup span{
+    transition: all .3s ease;
+}
+.signup:hover span {
+    transform: translateX(-2px);
+}
+.signup:hover svg{
+    transform: translateX(2px);
+}
