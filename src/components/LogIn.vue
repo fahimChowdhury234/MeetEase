@@ -26,6 +26,9 @@
                 </svg>
               </div>
             </div>
+            <div v-if="error">
+              {{ error }}
+            </div>
           </div>
           <button type="submit" @click.prevent="LogIn" class="signup flex items-center gap-2 h-[46px] justify-center w-full py-2 text-base rounded-full font-medium border bg-prim text-white transition-all hover:bg-prim-dark active:bg-prim">
             <div class="px-2 inline-block">Log In</div>
@@ -42,6 +45,7 @@
 
 <script>
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+
 export default {
   data() {
     return {
@@ -50,27 +54,38 @@ export default {
       displayName: null,
       lodding: true,
       show_password: false,
+      isEmail: false,
+      isPassword: false,
+      error: null,
     };
   },
   methods: {
     LogIn() {
       this.lodding = false;
+      this.$toast("I'm a toast!");
+ 
       const auth = getAuth();
+
       signInWithEmailAndPassword(auth, this.email, this.password)
         .then((userCredential) => {
           // Signed in
-          // const user = userCredential.user;
+          const user = userCredential.user;
+          console.log(user);
           console.log(userCredential);
-          this.$router.push("rooms");
+
+          // this.$router.push("rooms");
 
           // ...
         })
         .catch((error) => {
-          console.log(error);
+    
           // const errorCode = error.code;
-          // const errorMessage = error.message;
+          const errorMessage = error.message;
+          console.log(errorMessage,'errorMessage');
+          this.error = errorMessage
         });
     },
+    
   },
 };
 </script>

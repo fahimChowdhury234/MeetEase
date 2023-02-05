@@ -6,6 +6,10 @@ import "firebase/compat/auth";
 import "./assets/styles/tailwind.css";
 import "./assets/styles/style.css";
 import router from "../router.js";
+import Toast from "vue-toastification";
+// Import the CSS or use your own!
+import "vue-toastification/dist/index.css";
+Vue.use(Toast)
 
 Vue.config.productionTip = false;
 
