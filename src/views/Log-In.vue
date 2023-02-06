@@ -14,7 +14,7 @@
             <div class="flex items-center px-3.5 bg-[#F2F3F4] rounded-xl"><input name="email" placeholder="Email" v-model="email" type="text" class="bg-[#F2F3F4] w-full px-2 py-3.5 outline-none" value="" /></div>
           </div>
           <div class="mb-10">
-            <div class="flex items-center px-3.5 bg-[#F2F3F4] rounded-xl">
+            <div class="flex items-center px-3.5 bg-[#F2F3F4] rounded-xl" :class="isPassword ? 'bg-secondary' : ''">
               <input name="password" placeholder="Password" :type="[show_password ? 'text' : 'password']" v-model="password" class="bg-[#F2F3F4] w-full px-2 py-3.5 outline-none" value="" />
               <div class="cursor-pointer flex items-center pr-2">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#A0A0A0" class="w-6 h-6" @click.prevent="show_password = !show_password" v-if="!show_password">
@@ -31,8 +31,11 @@
             </div>
           </div>
           <button type="submit" @click.prevent="LogIn" class="signup flex items-center gap-2 h-[46px] justify-center w-full py-2 text-base rounded-full font-medium border bg-prim text-white transition-all hover:bg-prim-dark active:bg-prim">
-            <div class="px-2 inline-block">Log In</div>
-            <img src="../assets/img/spinar.svg" alt="" class="w-7 h-7" v-if="!lodding" />
+            <div v-if="!lodding" class="flex gap-2">
+              <div class="px-2 inline-block">wait...</div>
+              <img src="../assets/img/spinar.svg" alt="" class="w-7 h-7" />
+            </div>
+            <div v-else class="px-2 inline-block">LogIn</div>
           </button>
         </form>
       </div>
@@ -62,8 +65,8 @@ export default {
   methods: {
     LogIn() {
       this.lodding = false;
-      this.$toast("I'm a toast!");
- 
+      // this.$toast("I'm a toast!");
+
       const auth = getAuth();
 
       signInWithEmailAndPassword(auth, this.email, this.password)
@@ -73,19 +76,25 @@ export default {
           console.log(user);
           console.log(userCredential);
 
-          // this.$router.push("rooms");
+          this.$router.push("rooms");
+          this.$toast("successfully login");
+          this.lodding = true;
 
           // ...
         })
         .catch((error) => {
-    
-          // const errorCode = error.code;
+          const errorCode = error.code;
           const errorMessage = error.message;
-          console.log(errorMessage,'errorMessage');
-          this.error = errorMessage
+          if (errorCode == "auth/wrong-password") {
+            this.$toast.error("wrong-password");
+            this.isPassword = true;
+          }
+          // console.log(errorMessage,'errorMessage');
+          this.error = errorMessage;
+          // this.$toast.error('somthing wrong')
+          this.lodding = true;
         });
     },
-    
   },
 };
 </script>

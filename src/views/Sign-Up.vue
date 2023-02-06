@@ -33,8 +33,11 @@
             </div>
           </div>
           <button type="submit" @click.prevent="signUp" class="signup flex items-center gap-2 h-[46px] justify-center w-full py-2 text-base rounded-full font-medium border bg-prim text-white transition-all hover:bg-prim-dark active:bg-prim">
-            <div class="px-2 inline-block">Sign Up</div>
-            <img src="../assets/img/spinar.svg" alt="" class="w-7 h-7" v-if="!lodding" />
+            <div v-if="!lodding" class="flex gap-2">
+              <div class="px-2 inline-block">wait...</div>
+              <img src="../assets/img/spinar.svg" alt="" class="w-7 h-7" />
+            </div>
+            <div v-else class="px-2 inline-block">Sign Up</div>
           </button>
         </form>
       </div>
@@ -67,11 +70,19 @@ export default {
         .then(async () => {
           await updateProfile(auth.currentUser, { displayName });
           this.$router.push("login");
+          this.$toast("account created successfully");
+          this.lodding = true;
         })
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
+          if (errorCode === "auth/email-already-in-use") {
+            
+            this.$toast.error("Mail in use");
+          }
           console.log(errorCode, errorMessage);
+          this.$toast.error("somthing wrong");
+
           // ..
         });
     },

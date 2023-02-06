@@ -1,8 +1,8 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import headcec from "./src/components/HeadSec.vue";
-import login from "./src/components/LogIn.vue";
-import signup from "./src/components/SignUp.vue";
+import headcec from "./src/views/Header-section.vue";
+import login from "./src/views/Log-In.vue";
+import signup from "./src/views/Sign-Up.vue";
 import rooms from "./src/views/Rooms-view.vue";
 // import firebase from 'firebase/app';
 import firebase from 'firebase/compat/app';

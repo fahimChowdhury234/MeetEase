@@ -60,6 +60,8 @@ export default {
         .then(() => {
           // Sign-out successful.
           this.$router.replace('login')
+          this.$toast("sucessfully log out");
+
         })
         .catch((error) => {
           // An error happened.
