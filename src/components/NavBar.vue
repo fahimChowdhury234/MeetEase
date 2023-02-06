@@ -8,8 +8,8 @@
         </div>
         <div class="flex-none gap-x-28 flex items-center">
           <ul class="flex items-center gap-12">
-            <router-link to="/" class="text-base rounded-md font-medium text-gray cursor-pointer transition-all hover:text-prim" href="#">Home</router-link>
-            <router-link to="/login" class="text-base rounded-md font-medium text-gray cursor-pointer transition-all hover:text-prim" href="#">Log in</router-link>
+            <router-link to="/" class="text-base rounded-md font-medium text-gray cursor-pointer transition-all hover:text-prim" :class="currentUser ? 'hidden' : ''" href="#">Home</router-link>
+            <router-link to="/login" class="text-base rounded-md font-medium text-gray cursor-pointer transition-all hover:text-prim" :class="currentUser ? 'hidden' : ''" href="#">Log in</router-link>
           </ul>
           <div class="" v-if="!currentUser">
             <router-link to="/signup">
@@ -43,7 +43,7 @@ import { getAuth, signOut } from "firebase/auth";
 export default {
   // props:['currentUser'],
   props: {
-    currentUser: [String, Object]
+    currentUser: [String, Object],
   },
   // data() {
   //   return {
@@ -59,9 +59,8 @@ export default {
       signOut(auth)
         .then(() => {
           // Sign-out successful.
-          this.$router.replace('login')
+          this.$router.replace("login");
           this.$toast("sucessfully log out");
-
         })
         .catch((error) => {
           // An error happened.

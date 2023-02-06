@@ -11,6 +11,7 @@ module.exports = {
       white: "#fff",
       secondary: "#EA4C89",
       gray: "#0d0c22",
+      error:'#dd0f0fed'
     },
   },
   variants: {
