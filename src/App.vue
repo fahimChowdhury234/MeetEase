@@ -1,9 +1,12 @@
 <template>
-  <div id="app">
+  <div id="app" class="overflow-hidden">
     <div class="">
-      <navbar :currentUser="currentUser"/>
+      <navbar :currentUser="currentUser" />
       <div class="bg-[#e8e8e8]">
-        <router-view :currentUser="currentUser"/>
+        <transition name="fade">
+          <router-view :currentUser="currentUser" />
+        </transition>
+
         <!-- <router-view v-slot="{ Component }">
           <component :is="Component" :currentUser="currentUser" />
         </router-view> -->
@@ -33,6 +36,7 @@ export default {
   },
   methods: {
     logOut() {
+      console.log('logout');
       const auth = getAuth();
       signOut(auth)
         .then(() => {
@@ -55,7 +59,23 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   /* text-align: center; */
 }
+
 .router-link-exact-active {
   color: #15a493 !important;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: all 0.8s ease-in;
+  transform: scale(1);
+
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: all 0.4s ease-in-out;
+
+}
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
 }
 </style>

@@ -4,7 +4,9 @@
       <div class="flex justify-between items-center py-4 w-[1350px] mx-auto">
         <div class="flex-1">
           <!-- <a class="btn btn-ghost normal-case text-xl">daisyUI</a> -->
-          <img class="w-44 object-cover" src="../assets/img/logo.png" alt="" />
+       <router-link to="/">
+        <img class="w-44 object-cover" src="../assets/img/logo.png" alt="" />
+       </router-link>
         </div>
         <div class="flex-none gap-x-28 flex items-center">
           <ul class="flex items-center gap-12">

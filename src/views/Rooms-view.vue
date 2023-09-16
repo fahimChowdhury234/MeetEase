@@ -9,7 +9,7 @@
         <p class="text-sm rounded-md font-medium text-gray text-left">Create a meeting, invite participants, and interact through screen sharing and audio/video conferencing.</p>
       </div>
       <div class="py-3 flex justify-end mt-2">
-        <button class="signup flex items-center gap-1 justify-center w-36 py-2 text-base rounded-full font-medium border bg-prim text-white transition-all hover:bg-prim-dark active:bg-prim" @click="logOut">
+        <button class="signup flex items-center gap-1 justify-center w-36 py-2 text-base rounded-full font-medium border bg-prim text-white transition-all hover:bg-prim-dark active:bg-prim">
           <span>Meet Now </span>
           <img src="../assets/img/users.png" alt="" class="h-5 w-5" />
         </button>
