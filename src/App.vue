@@ -29,7 +29,17 @@ export default {
   data() {
     return {
       currentUser: null,
+      hasMounted: false
     };
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      if (!vm.hasMounted) {
+        vm.created();
+        vm.mounted();
+        vm.hasMounted = true;
+      }
+    });
   },
   mounted() {
     this.currentUser = firebase.auth().currentUser;
@@ -64,18 +74,21 @@ export default {
   color: #15a493 !important;
 }
 
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: all 0.8s ease-in;
   transform: scale(1);
 
 }
-.fade-enter, .fade-leave-to {
+
+.fade-enter,
+.fade-leave-to {
   opacity: 0;
   transform: scale(0.9);
   transition: all 0.4s ease-in-out;
 
 }
+
 .scrollbar-hidden::-webkit-scrollbar {
   display: none;
-}
-</style>
+}</style>
