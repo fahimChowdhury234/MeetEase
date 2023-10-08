@@ -5,7 +5,27 @@
             <div id="userVideo" class="video border-2 border-prim-dark rounded-lg h-96">
 
             </div>
-            <div class="controler flex items-center gap-5 justify-center mt-5">
+            <button @click="toggle_video" v-if="video.mute || isVideoMute"
+                class="w-16 h-16 rounded-full border border-error flex justify-center items-center text-error">
+
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M12 18.75H4.5a2.25 2.25 0 01-2.25-2.25V9m12.841 9.091L16.5 19.5m-1.409-1.409c.407-.407.659-.97.659-1.591v-9a2.25 2.25 0 00-2.25-2.25h-9c-.621 0-1.184.252-1.591.659m12.182 12.182L2.909 5.909M1.5 4.5l1.409 1.409" />
+                </svg>
+
+
+            </button>
+            <button v-else @click="toggle_video"
+                class="w-16 h-16 rounded-full border border-prim-dark flex justify-center items-center text-prim-dark">
+
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round"
+                        d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" />
+                </svg>
+            </button>
+            <!-- <div class="controler flex items-center gap-5 justify-center mt-5">
                 <button @click="toggle_audio" v-if="isAudioMute"
                     class="w-16 h-16 rounded-full border border-error flex justify-center items-center text-error">
 
@@ -47,68 +67,166 @@
                             d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" />
                     </svg>
                 </button>
-            </div>
+            </div> -->
         </div>
     </div>
 </template>
 
 <script>
-// import AgoraRTC from "agora-rtc-sdk-ng"
+import AgoraRTC from "agora-rtc-sdk-ng"
 
 export default {
     props: ['audio', 'video'],
     data() {
         return {
             isVideoMute: false,
-            isAudioMute: false
+            isAudioMute: false,
+            channel: 'meetease',
+            appId: '0bc22246aa1240ec8740fc4d5e5a1064',
+            agora_token: '007eJxTYIiIPG4qondns6ru+RiHyvwo9ZYjM6y/3V36yJup/Gzv1bMKDAZJyUZGRiZmiYmGRiYGqckW5iYGackmKaappomGBmYm/nuVUhsCGRmeZrOxMjJAIIjPwZCbmlqSmlicysAAAKrIIHY=',
 
+            channelParameters: {
+                localAudioTrack: null,
+                localVideoTrack: null,
+            },
         }
     },
     mounted() {
-        this.isVideoOn()
+        // this.isVideoOn()
+        this.connectToRoom()
     },
     methods: {
-        async isVideoOn() {
-            // this.video.media = await AgoraRTC.createCameraVideoTrack({ cameraId: this.video.device_id });
+
+
+
+
+
+
+
+
+
+
+        async connectToRoom(eventsCallback) {
+
+            // // init AgoraRTC local client
+            // this.client = AgoraRTC.createClient({ codec: "vp8", mode: "rtc", });
+
+            // let uid = await this.client.join(this.appId, this.channel, this.agora_token, null)
+            //     .catch(err => {
+            //         console.log(err);
+            //     });
+
+            // Set up the signaling engine with the provided App ID, UID, and configuration
+            let agoraEngine = null
+            const setupAgoraEngine = async () => {
+                agoraEngine = new AgoraRTC.createClient({ mode: "rtc", codec: "vp9" });
+            };
+
+            await setupAgoraEngine();
+
+            const getAgoraEngine = () => {
+                return agoraEngine;
+            };
+            console.log(getAgoraEngine);
+            agoraEngine.on("user-published", async (user, mediaType) => {
+                // Subscribe to the remote user when the SDK triggers the "user-published" event.
+                await agoraEngine.subscribe(user, mediaType);
+                console.log("subscribe success");
+                eventsCallback("user-published", user, mediaType)
+            });
+            // Listen for the "user-unpublished" event.
+            agoraEngine.on("user-unpublished", (user) => {
+                console.log(user.uid + "has left the channel");
+            });
+            await agoraEngine.join(
+                this.appId, this.channel, this.agora_token, null
+            );
+            // Create a local audio track from the audio sampled by a microphone.
+            this.channelParameters.localAudioTrack =
+                await AgoraRTC.createMicrophoneAudioTrack();
+            // Create a local video track from the video captured by a camera.
+            this.channelParameters.localVideoTrack = await AgoraRTC.createCameraVideoTrack();
+            // Append the local video container to the page body.
+            // document.body.append(userVideo);
+            // Publish the local audio and video tracks in the channel.
+            await getAgoraEngine().publish([
+                this.channelParameters.localAudioTrack,
+                this.channelParameters.localVideoTrack,
+            ]);
+            // Play the local video track.
+            // this.channelParameters.localVideoTrack.play('userVideo');
 
             if (this.video.mute) {
-                this.video.media.play('userVideo');
-                await this.video.media.setEnabled(false);
-                console.log('video off');
+                await this.channelParameters.localVideoTrack.stop()
+                await this.channelParameters.localVideoTrack.setEnabled(false);
+
+
+                console.log('v off');
             } else {
-                console.log('video on');
-                this.video.media.play('userVideo');
+                console.log('v on');
+                this.channelParameters.localVideoTrack.play('userVideo');
+
+                await this.channelParameters.localVideoTrack.setEnabled(true);
+
             }
         },
+        // async join(localPlayerContainer) {
+
+        // }
+
+
+        // subscribeStreamEvents(){
+
+        // }
+
+
+        // async isVideoOn() {
+        //     // this.video.media = await AgoraRTC.createCameraVideoTrack({ cameraId: this.video.device_id });
+
+        //     if (this.video.mute) {
+        //         this.video.media.play('userVideo');
+        //         await this.video.media.setEnabled(false);
+        //         console.log('video off');
+        //     } else {
+        //         console.log('video on');
+        //         this.video.media.play('userVideo');
+        //     }
+        // },
         async toggle_video() {
             if (this.video.mute) {
                 this.video_preview_loading = true;
-                await this.video.media.setEnabled(true);
-          
+
+                this.channelParameters.localVideoTrack.play('userVideo');
+                await this.channelParameters.localVideoTrack.setEnabled(true);
+                console.log('if');
 
                 this.video_preview_loading = false;
             }
             else {
                 this.video_preview_loading = true;
-                await this.video.media.setEnabled(false);
-                this.video.media.play('userVideo');
+                await this.channelParameters.localVideoTrack.stop();
+                await this.channelParameters.localVideoTrack.setEnabled(false);
+
+
+
+                console.log('else');
 
                 this.video_preview_loading = false;
             }
-            this.isVideoMute = !this.isVideoMute
+            this.$emit('inp')
         },
-        toggle_audio() {
-            if (this.audio.mute) {
-                console.log(this.audio.media, 'this.audio.media');
-                this.audio.media.setMuted(false);
-                // this.update_audio_from_room();
-            }
-            else {
-                this.audio.media.setMuted(true);
-                // this.clear_audio_from_room();
-            }
-            this.isAudioMute = !this.isAudioMute
-        },
+        // toggle_audio() {
+        //     if (this.audio.mute) {
+        //         console.log(this.audio.media, 'this.audio.media');
+        //         this.audio.media.setMuted(false);
+        //         // this.update_audio_from_room();
+        //     }
+        //     else {
+        //         this.audio.media.setMuted(true);
+        //         // this.clear_audio_from_room();
+        //     }
+        //     this.isAudioMute = !this.isAudioMute
+        // },
     }
 }
 </script>

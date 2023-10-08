@@ -4,7 +4,7 @@ import headcec from "./src/views/Header-section.vue";
 import login from "./src/views/Log-In.vue";
 import signup from "./src/views/Sign-Up.vue";
 import rooms from "./src/views/Rooms-view.vue";
-import meeting from "./src/views/Meeting.vue";
+// import meeting from "./src/views/Meeting.vue";
 
 // import firebase from 'firebase/app';
 import firebase from 'firebase/compat/app';
@@ -42,13 +42,13 @@ const router = new VueRouter({
       meta: { requiresAuth: true },
       props: true,
     },
-    {
-      path: "/meeting",
-      name: "meeting",
-      component: meeting,
-      meta: { requiresAuth: true },
-      props: true,
-    },
+    // {
+    //   path: "/meeting",
+    //   name: "meeting",
+    //   component: meeting,
+    //   meta: { requiresAuth: true },
+    //   props: true,
+    // },
   ],
 });
 

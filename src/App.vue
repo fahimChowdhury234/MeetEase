@@ -29,18 +29,10 @@ export default {
   data() {
     return {
       currentUser: null,
-      hasMounted: false
+    
     };
   },
-  beforeRouteEnter(to, from, next) {
-    next(vm => {
-      if (!vm.hasMounted) {
-        vm.created();
-        vm.mounted();
-        vm.hasMounted = true;
-      }
-    });
-  },
+
   mounted() {
     this.currentUser = firebase.auth().currentUser;
   },

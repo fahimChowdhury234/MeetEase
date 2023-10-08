@@ -75,18 +75,18 @@
             </div>
         </div>
     </div>
-    <!-- <div v-else>
-        <MeetingBox :video="video" :audio="audio" />
-    </div> -->
+    <div v-else>
+        <MeetingBox :video="video" :audio="audio" @inp="video.mute = !video.mute" />
+    </div>
 </template>
 
 <script>
 import AgoraRTC from "agora-rtc-sdk-ng"
-// import MeetingBox from "./Meeting-box.vue";
+import MeetingBox from "./Meeting-box.vue";
 
 
 export default {
-    // components: { MeetingBox },
+    components: { MeetingBox },
 
     data() {
         return {
@@ -104,19 +104,33 @@ export default {
             },
             video_preview_loading: false,
             show: false,
-          
+            hasView: false
+
         };
     },
 
-    mounted() {
+    async mounted() {
 
 
 
-        this.start_meeting();
+        if (!this.hasView) {
+
+            this.preview_video_audio();
+            this.hasView = true
+
+        }
 
     },
 
+
     methods: {
+        async preview_video_audio() {
+            if (!this.hasView) {
+                this.update_audio();
+                this.update_video();
+            }
+            this.hasView = true
+        },
         start_meeting() {
             if (this.video.mute == false) {
                 this.update_video();
@@ -130,7 +144,12 @@ export default {
         },
         async update_video() {
             this.video.media = await AgoraRTC.createCameraVideoTrack({ cameraId: this.video.device_id });
-            this.video.media.play('video');
+            if (this.show === false) {
+                this.video.media.play('video');
+
+            } else {
+                console.log('meeting box');
+            }
         },
         async update_audio() {
             this.audio.media = await AgoraRTC.createMicrophoneAudioTrack({ microphoneId: this.audio.device_id });
