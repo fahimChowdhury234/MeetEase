@@ -1,11 +1,11 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 
 <template>
-    <div class="h-[90vh] w-[1350px] mx-auto" v-if="!show">
-        <div class="flex items-center h-full">
-            <div class="w-1/2">
+    <div class="h-[90vh]  container mx-auto lg:w-[1350px]" v-if="!show">
+        <div class="flex items-center flex-col gap-5 h-full mt-4 mx-4 lg:flex-row lg:mt-0 lg:mx-0 lg:gap-0">
+            <div class="w-full lg:w-1/2">
 
-                <div>
+                <div class="relative">
                     <div class="video border-2 border-prim-dark rounded-lg h-96" id="video" v-show="!video.mute">
                     </div>
                     <div v-show="video.mute"
@@ -13,7 +13,7 @@
                         camera is off
                     </div>
 
-                    <p v-if="video_preview_loading">Lodding....</p>
+                    <p class="" v-if="video_preview_loading">Lodding....</p>
 
                 </div>
 
@@ -61,7 +61,7 @@
                     </button>
                 </div>
             </div>
-            <div class="w-1/2">
+            <div class="w-full lg:w-1/2">
                 <div class="flex justify-center items-center gap-5">
                     <button @click="joinRoom"
                         class=" flex items-center gap-2 h-[46px] justify-center  px-10 py-2 text-base rounded-full font-medium border bg-prim text-white transition-all duration-700 hover:bg-prim-dark active:bg-prim">
@@ -76,7 +76,7 @@
         </div>
     </div>
     <div v-else>
-        <MeetingBox :video="video" :audio="audio" @inp="video.mute = !video.mute" />
+        <MeetingBox :video="video" :audio="audio" @muteVideo="toggleMeetBoxVideo" @muteAudio="toggleMeetBoxAudio" :uid="uid"  :uName="uName" :user="user"/>
     </div>
 </template>
 
@@ -87,6 +87,7 @@ import MeetingBox from "./Meeting-box.vue";
 
 export default {
     components: { MeetingBox },
+    props: ['uid','uName','user'],
 
     data() {
         return {
@@ -114,16 +115,22 @@ export default {
 
 
         if (!this.hasView) {
-
             this.preview_video_audio();
             this.hasView = true
-
         }
 
     },
 
 
     methods: {
+        async toggleMeetBoxAudio() {
+            this.audio.mute = !this.audio.mute;
+            await this.audio.media.setEnabled(false);
+        },
+        async toggleMeetBoxVideo() {
+            this.video.mute = !this.video.mute;
+            await this.video.media.setEnabled(false);
+        },
         async preview_video_audio() {
             if (!this.hasView) {
                 this.update_audio();
@@ -155,12 +162,10 @@ export default {
             this.audio.media = await AgoraRTC.createMicrophoneAudioTrack({ microphoneId: this.audio.device_id });
             if (this.audio.mute) {
                 console.log(this.audio.media, 'this.audio.media');
-                this.audio.media.setMuted(false);
-                // this.update_audio_from_room();
+                await this.audio.media.setEnabled(true);
             }
             else {
-                this.audio.media.setMuted(true);
-                // this.clear_audio_from_room();
+                await this.audio.media.setEnabled(false);
             }
         },
         async toggle_video() {
@@ -176,15 +181,13 @@ export default {
             }
             this.video.mute = !this.video.mute;
         },
-        toggle_audio() {
+        async toggle_audio() {
             if (this.audio.mute) {
                 console.log(this.audio.media, 'this.audio.media');
-                this.audio.media.setMuted(false);
-                // this.update_audio_from_room();
+                await this.audio.media.setEnabled(true);
             }
             else {
-                this.audio.media.setMuted(true);
-                // this.clear_audio_from_room();
+                await this.audio.media.setEnabled(false);
             }
             this.audio.mute = !this.audio.mute;
         },

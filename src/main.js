@@ -2,6 +2,7 @@ import Vue from "vue";
 import App from "./App.vue";
 // import firebase from 'firebase/app';
 import firebase from "firebase/compat/app";
+import "firebase/compat/firestore";
 import "firebase/compat/auth";
 import "./assets/styles/tailwind.css";
 import "./assets/styles/style.css";
@@ -21,8 +22,10 @@ const firebaseConfig = {
   messagingSenderId: "270557109224",
   appId: "1:270557109224:web:522bf815fbe98e28e5e25d",
 };
-firebase.initializeApp(firebaseConfig);
+// firebase.initializeApp(firebaseConfig);
+const a = firebase.initializeApp(firebaseConfig);
 
+export const db = a.firestore();
 // new Vue({
 //   router,
 //   render: (h) => h(App),

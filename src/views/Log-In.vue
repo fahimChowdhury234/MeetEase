@@ -1,7 +1,7 @@
 <template>
-  <div class="w-[1350px] mx-auto py-9 h-[90vh]">
+  <div class="container mx-auto py-9 h-[90vh] lg:w-[1350px]">
     <div class="flex items-center gap-32 h-full">
-      <div class="bg-white rounded-md py-5 md:py-10 lg:py-16 px-7 md:px-16 w-full lg:w-5/12">
+      <div class="bg-white rounded-md py-5 mx-4 md:py-10 lg:py-16 px-7 md:px-16 w-full lg:w-5/12 lg:mx-0">
         <div class="font-medium text-left text-2xl lg:text-3xl text-prim">Get startted</div>
         <div class="flex md:text-lg text-base items-center mb-10 mt-2">
           <div class="mr-1 text-base font-light">New user?</div>
@@ -59,7 +59,7 @@
           </button>
         </form>
       </div>
-      <div class="w-6/12 flex justify-center items-center">
+      <div class="w-6/12 hidden justify-center items-center lg:flex">
         <img src="../assets/img/signup.png" alt="" class="animate-bounce" style="animation-duration: 3s" />
       </div>
     </div>
@@ -67,6 +67,7 @@
 </template>
 
 <script>
+
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 export default {
@@ -83,7 +84,7 @@ export default {
     };
   },
   methods: {
-    LogIn() {
+    async LogIn() {
       this.lodding = false;
       // this.$toast("I'm a toast!");
 
@@ -93,6 +94,7 @@ export default {
         .then((userCredential) => {
           // Signed in
           const user = userCredential.user;
+
           console.log(user);
           console.log(userCredential);
 
@@ -128,6 +130,7 @@ export default {
           // this.$toast.error('somthing wrong')
           this.lodding = true;
         });
+ 
     },
   },
 };
